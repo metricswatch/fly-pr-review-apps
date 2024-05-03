@@ -20,7 +20,6 @@ EVENT_TYPE=$(jq -r .action /github/workflow/event.json)
 app="${INPUT_NAME:-pr-$PR_NUMBER-$GITHUB_REPOSITORY_OWNER-$GITHUB_REPOSITORY_NAME}"
 # Change underscores to hyphens.
 app="${app//_/-}"
-region="${INPUT_REGION:-${FLY_REGION:-iad}}"
 org="${INPUT_ORG:-${FLY_ORG:-personal}}"
 image="$INPUT_IMAGE"
 config="${INPUT_CONFIG:-fly.toml}"
@@ -56,9 +55,9 @@ fi
 # Trigger the deploy of the new version.
 echo "Contents of config $config file: " && cat "$config"
 if [ -n "$INPUT_VM" ]; then
-  flyctl deploy --config "$config" --app "$app" --regions "$region" --image "$image" --strategy immediate --ha=$INPUT_HA --vm-size "$INPUT_VMSIZE"
+  flyctl deploy --config "$config" --app "$app" --image "$image" --strategy immediate --ha=$INPUT_HA --vm-size "$INPUT_VMSIZE"
 else
-  flyctl deploy --config "$config" --app "$app" --regions "$region" --image "$image" --strategy immediate --ha=$INPUT_HA --vm-cpu-kind "$INPUT_CPUKIND" --vm-cpus $INPUT_CPU --vm-memory "$INPUT_MEMORY"
+  flyctl deploy --config "$config" --app "$app" --image "$image" --strategy immediate --ha=$INPUT_HA --vm-cpu-kind "$INPUT_CPUKIND" --vm-cpus $INPUT_CPU --vm-memory "$INPUT_MEMORY"
 fi
 
 # Make some info available to the GitHub workflow.
