@@ -52,6 +52,9 @@ if [ -n "$INPUT_POSTGRES" ]; then
   flyctl postgres attach "$INPUT_POSTGRES" --app "$app" || true
 fi
 
+echo "Cleaning up stopped release command instances"
+fly machines list --json | jq '.[] | select (.config.metadata.fly_process_group == "fly_app_release_command" and .state == "stopped") | .id'
+
 # Trigger the deploy of the new version.
 echo "Contents of config $config file: " && cat "$config"
 if [ -n "$INPUT_VM" ]; then
